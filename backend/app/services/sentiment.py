@@ -137,13 +137,16 @@ def predict_texts(texts: list[str]) -> list[dict]:
 def summarize(results: list[dict]) -> dict:
     total = len(results)
     positive = sum(1 for r in results if r["label"] == "positive")
+    neutral = sum(1 for r in results if r["label"] == "neutral")
     negative = sum(1 for r in results if r["label"] == "negative")
-    other = total - positive - negative
+    other = total - positive - neutral - negative
     return {
         "total": total,
         "positive": positive,
+        "neutral": neutral,
         "negative": negative,
         "other": other,
         "positive_pct": round(100 * positive / total, 1) if total else 0,
+        "neutral_pct": round(100 * neutral / total, 1) if total else 0,
         "negative_pct": round(100 * negative / total, 1) if total else 0,
     }

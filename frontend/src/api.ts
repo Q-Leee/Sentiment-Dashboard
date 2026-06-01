@@ -10,9 +10,11 @@ export type SentimentResult = {
 export type Summary = {
   total: number;
   positive: number;
+  neutral: number;
   negative: number;
   other: number;
   positive_pct: number;
+  neutral_pct: number;
   negative_pct: number;
 };
 

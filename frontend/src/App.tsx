@@ -19,7 +19,7 @@ const SAMPLE_LINES = [
   "Great value for the price. Highly recommend!",
 ];
 
-const COLORS = { positive: "#34d399", negative: "#f87171" };
+const COLORS = { positive: "#34d399", neutral: "#a3a3a3", negative: "#f87171" };
 
 export default function App() {
   const [input, setInput] = useState(SAMPLE_LINES.join("\n"));
@@ -31,6 +31,7 @@ export default function App() {
     if (!data) return [];
     return [
       { name: "Positive", value: data.summary.positive, key: "positive" },
+      { name: "Neutral", value: data.summary.neutral, key: "neutral" },
       { name: "Negative", value: data.summary.negative, key: "negative" },
     ].filter((d) => d.value > 0);
   }, [data]);
@@ -39,6 +40,7 @@ export default function App() {
     if (!data) return [];
     return [
       { name: "Positive", count: data.summary.positive },
+      { name: "Neutral", count: data.summary.neutral },
       { name: "Negative", count: data.summary.negative },
     ];
   }, [data]);
@@ -126,6 +128,12 @@ export default function App() {
                 {data.summary.positive} ({data.summary.positive_pct}%)
               </strong>
             </div>
+            <div className="stat-card neutral">
+              <span className="label">Neutral</span>
+              <strong>
+                {data.summary.neutral} ({data.summary.neutral_pct}%)
+              </strong>
+            </div>
             <div className="stat-card negative">
               <span className="label">Negative</span>
               <strong>
@@ -173,7 +181,13 @@ export default function App() {
                     {barData.map((_, i) => (
                       <Cell
                         key={i}
-                        fill={i === 0 ? COLORS.positive : COLORS.negative}
+                        fill={
+                          i === 0
+                            ? COLORS.positive
+                            : i === 1
+                              ? COLORS.neutral
+                              : COLORS.negative
+                        }
                       />
                     ))}
                   </Bar>
@@ -198,7 +212,11 @@ export default function App() {
                     <td>{r.text}</td>
                     <td>
                       <span className={`badge ${r.label}`}>
-                        {r.label === "positive" ? "Positive" : "Negative"}
+                        {r.label === "positive"
+                          ? "Positive"
+                          : r.label === "neutral"
+                            ? "Neutral"
+                            : "Negative"}
                       </span>
                     </td>
                     <td>
@@ -272,6 +290,7 @@ export default function App() {
         .stat-card .label { display: block; color: #94a3b8; font-size: 0.85rem; }
         .stat-card strong { font-size: 1.35rem; }
         .stat-card.positive strong { color: #34d399; }
+        .stat-card.neutral strong { color: #d4d4d4; }
         .stat-card.negative strong { color: #f87171; }
         .charts {
           display: grid;
@@ -296,6 +315,7 @@ export default function App() {
           font-size: 0.8rem;
         }
         .badge.positive { background: #064e3b; color: #6ee7b7; }
+        .badge.neutral { background: #262626; color: #e5e5e5; }
         .badge.negative { background: #7f1d1d; color: #fca5a5; }
         .low-certainty { color: #94a3b8; font-size: 0.8rem; }
       `}</style>

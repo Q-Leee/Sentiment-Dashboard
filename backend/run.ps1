@@ -7,4 +7,4 @@ if (-not (Test-Path ".venv")) {
 
 .\.venv\Scripts\pip.exe install -q -r requirements.txt
 .\.venv\Scripts\python.exe scripts\train.py
-.\.venv\Scripts\uvicorn.exe app.main:app --reload --host 127.0.0.1 --port 8010
+.\.venv\Scripts\uvicorn.exe app.main:app --reload --host 127.0.0.1 --port 8011

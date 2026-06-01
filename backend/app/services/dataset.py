@@ -19,6 +19,10 @@ _LABEL_MAP = {
     "pos": "positive",
     "1": "positive",
     "good": "positive",
+    "neutral": "neutral",
+    "neu": "neutral",
+    "2": "neutral",
+    "3": "neutral",
     "negative": "negative",
     "neg": "negative",
     "0": "negative",
@@ -55,6 +59,8 @@ def _stars_to_label(value) -> str | None:
         return "negative"
     if stars >= 4:
         return "positive"
+    if stars == 3:
+        return "neutral"
     return None
 
 
@@ -90,7 +96,7 @@ def _finalize_frame(df: pd.DataFrame, min_len: int = 1) -> pd.DataFrame:
     df = df.dropna(subset=["label"])
     df = df[df["text"].str.len() >= min_len]
     df["label"] = df["label"].astype(str).str.lower().str.strip()
-    df = df[df["label"].isin(("positive", "negative"))]
+    df = df[df["label"].isin(("positive", "neutral", "negative"))]
     return df.drop_duplicates(subset=["text"]).reset_index(drop=True)
 
 

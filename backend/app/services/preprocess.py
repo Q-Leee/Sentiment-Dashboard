@@ -54,6 +54,20 @@ _NEGATION_VERB = re.compile(
     re.IGNORECASE,
 )
 
+# Explicit neutral tokens (users often type these as a test)
+_EXPLICIT_NEUTRAL = re.compile(
+    r"^(?:neutral|meh|so\s*so|soso|ok|okay|fine|average)(?:[.!?]+)?$",
+    re.IGNORECASE,
+)
+
+# Common sentiment phrases that bag-of-words models often misread.
+# We treat these as "semantic" rules to avoid confusing results.
+_NOT_BAD = re.compile(r"\bnot\s+(?:too\s+)?bad\b", re.IGNORECASE)
+_NOT_GOOD = re.compile(r"\bnot\s+good\b", re.IGNORECASE)
+_NOT_GREAT = re.compile(r"\bnot\s+great\b", re.IGNORECASE)
+_NOT_AMAZING = re.compile(r"\bnot\s+amazing\b", re.IGNORECASE)
+_NOT_WORTH = re.compile(r"\bnot\s+worth\b", re.IGNORECASE)
+
 
 def clean_text(text: str) -> str:
     text = text.strip().lower()
@@ -83,6 +97,13 @@ def augment_no_apostrophe_variants(text: str) -> list[str]:
 
 def rule_label(text: str) -> str | None:
     text = clean_text(text)
+    if _EXPLICIT_NEUTRAL.match(text):
+        return "neutral"
+    # Phrase-level rules (handle negation semantics)
+    if _NOT_BAD.search(text):
+        return "neutral"
+    if _NOT_GOOD.search(text) or _NOT_GREAT.search(text) or _NOT_AMAZING.search(text) or _NOT_WORTH.search(text):
+        return "negative"
     if _POSITIVE_COME_BACK.search(text):
         return "positive"
     if _NEGATIVE_COME_BACK.search(text):
